@@ -14,7 +14,7 @@ import com.comze_instancelabs.minigamesapi.util.Validator;
 
 public class IArenaSetup extends ArenaSetup {
 
-	@SuppressWarnings({ "static-access", "deprecation" })
+	@SuppressWarnings({ "static-access" })
 	@Override
 	public Arena saveArena(JavaPlugin plugin, String arenaname) {
 		if (!Validator.isArenaValid(plugin, arenaname)) {

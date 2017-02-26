@@ -1,17 +1,12 @@
 package net.overgy.TNTRun;
 
-//import java.util.HashSet;
-//import java.util.LinkedList;
-
 import org.bukkit.Bukkit;
-//import org.bukkit.Effect;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-//import org.bukkit.block.BlockFace;
-//import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 
@@ -31,14 +26,12 @@ public class IArena extends Arena {
 		this.m = m;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void joinPlayerLobby(String playername) {
 		super.joinPlayerLobby(playername);
 		return;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void start(boolean tp) {
 
@@ -78,10 +71,7 @@ public class IArena extends Arena {
 		super.stop();
 	}
 
-	// Para destruir el bloque.
-	// private final int SCAN_DEPTH = 2;
-
-	@SuppressWarnings("deprecation")
+	// Para destruir bloques.
 	public static void removeBlocksUnderPlayer(IArena arena) {
 
 		final IArena a = arena;
@@ -97,7 +87,7 @@ public class IArena extends Arena {
 					if (blocktoremove1 == null)
 						return;
 					Block blocktoremove2 = blocktoremove1.getRelative(BlockFace.DOWN);
-					if (blocktoremove1 != null && blocktoremove2 != null) {
+					if (blocktoremove2 != null) {
 						final Location blockloc1 = blocktoremove1.getLocation();
 						final Location blockloc2 = blocktoremove2.getLocation();
 
@@ -106,6 +96,8 @@ public class IArena extends Arena {
 							public void run() {
 								// Check if game hasn't stopped meanwhile
 								if (a.getArenaState() == ArenaState.INGAME) {
+									blockloc1.getWorld().playEffect(blockloc1, Effect.CLICK1,
+											blocktoremove1.getTypeId());
 									a.getSmartReset().addChanged(blockloc1.getBlock(), false);
 									blockloc1.getBlock().setType(Material.AIR);
 									a.getSmartReset().addChanged(blockloc2.getBlock(), false);

@@ -32,7 +32,7 @@ public class Main extends JavaPlugin implements Listener {
 	MinigamesAPI api = null;
 	PluginInstance pli = null;
 
-	@SuppressWarnings({ "deprecation", "static-access" })
+	@SuppressWarnings({ "static-access" })
 	public void onEnable() {
 		m = this;
 		api = MinigamesAPI.getAPI().setupAPI(this, "TNTRun", IArena.class, new ArenasConfig(this),
@@ -59,7 +59,7 @@ public class Main extends JavaPlugin implements Listener {
 		return ret;
 	}
 
-	@SuppressWarnings({ "static-access", "deprecation" })
+	@SuppressWarnings({ "static-access" })
 	public static IArena initArena(String arena) {
 		IArena a = new IArena(m, arena);
 		ArenaSetup s = MinigamesAPI.getAPI().pinstances.get(m).arenaSetup;
@@ -69,12 +69,11 @@ public class Main extends JavaPlugin implements Listener {
 		return a;
 	}
 
-	@SuppressWarnings({ "deprecation", "static-access" })
+	@SuppressWarnings({ "static-access" })
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		return api.getCommandHandler().handleArgs(this, "tntrun", "/" + cmd.getName(), sender, args);
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlace(BlockPlaceEvent event) {
 		if (pli.global_players.containsKey(event.getPlayer().getName())) {
@@ -82,7 +81,6 @@ public class Main extends JavaPlugin implements Listener {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.getEntity() instanceof Player) {
@@ -102,7 +100,6 @@ public class Main extends JavaPlugin implements Listener {
 		}
 	}
 
-	@SuppressWarnings({ "deprecation" })
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
 		if (pli.global_players.containsKey(event.getPlayer().getName())) {
