@@ -1,17 +1,11 @@
 package net.overgy.TNTRun;
 
-//import java.util.HashSet;
-//import java.util.LinkedList;
-
 import org.bukkit.Bukkit;
-//import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-//import org.bukkit.block.BlockFace;
-//import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 
@@ -78,9 +72,7 @@ public class IArena extends Arena {
 		super.stop();
 	}
 
-	// Para destruir el bloque.
-	// private final int SCAN_DEPTH = 2;
-
+	// Para destruir bloques.
 	@SuppressWarnings("deprecation")
 	public static void removeBlocksUnderPlayer(IArena arena) {
 
