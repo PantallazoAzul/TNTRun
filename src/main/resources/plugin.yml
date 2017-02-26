@@ -1,0 +1,13 @@
+name: TNTRun
+main: net.overgy.TNTRun.Main
+version: 0.0.1-SNAPSHOT
+author: [PantallazoAzul]
+description: TNTRun is the well known TNTRun minigame using MinigamesLib.
+softdepend: [MinigamesLib]
+depend: [MinigamesLib]
+loadbefore: [MinigamesLib]
+commands:
+   tn:
+      description: Main command
+      usage: /tn [action]
+      aliases: [tntrun, tntr]
