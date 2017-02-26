@@ -1,5 +1,5 @@
 # TNTRun
-TNTRun is the well known TNTRun minigame using MinigamesLib.
+TNTRun is the well known TNTRun minigame using [MinigamesLib](https://github.com/MysticCity/MinigamesAPI).
 
 ## Special thanks
 - To Shevchik's code, it helped me a lot https://github.com/Shevchik/TNTRun/
