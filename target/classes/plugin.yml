@@ -1,6 +1,6 @@
 name: MGTNTRun
 main: net.overgy.TNTRun.Main
-version: 0.0.1-SNAPSHOT
+version: 0.1.0-SNAPSHOT
 author: [PantallazoAzul]
 description: MGTNTRun is the well known TNTRun minigame using MinigamesLib.
 softdepend: [MinigamesLib]

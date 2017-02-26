@@ -1,16 +1,17 @@
 package net.overgy.TNTRun;
 
-import java.util.HashSet;
-import java.util.LinkedList;
+//import java.util.HashSet;
+//import java.util.LinkedList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
+//import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
+//import org.bukkit.block.BlockFace;
+//import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 
@@ -25,9 +26,6 @@ public class IArena extends Arena {
 
 	private int block_destroyer;
 
-	private HashSet<Block> blockstodestroy = new HashSet<Block>();
-	private LinkedList<BlockState> blocks = new LinkedList<BlockState>();
-
 	public IArena(Main m, String arena_id) {
 		super(m, arena_id, ArenaType.REGENERATION);
 		this.m = m;
@@ -36,8 +34,6 @@ public class IArena extends Arena {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void joinPlayerLobby(String playername) {
-		// Test for working.
-		// Bukkit.getLogger().info("Test joinPlayerLobby()");
 		super.joinPlayerLobby(playername);
 		return;
 	}
@@ -45,6 +41,7 @@ public class IArena extends Arena {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void start(boolean tp) {
+
 		final IArena a = this;
 
 		super.start(tp);
@@ -63,28 +60,13 @@ public class IArena extends Arena {
 
 	@Override
 	public void started() {
-		// Test for working.
-		// Bukkit.getLogger().info("Test started()");
 
 		final IArena a = this;
 
 		block_destroyer = Bukkit.getScheduler().scheduleSyncRepeatingTask(m, new Runnable() {
-			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
-				// if (a.getPlayerAlive() == 0) {
-				// a.stop();
-				// return;
-				// }
-				// handle players
-				for (String p_ : a.getArena().getAllPlayers()) {
-					Player p = Bukkit.getPlayer(p_);
-					// if (a.getArena().getPlayerAlive() > 1) {
-					// a.stop();
-					// return;
-					// }
-					handlePlayer(p);
-				}
+				removeBlocksUnderPlayer(a);
 			}
 		}, 0, 1);
 	}
@@ -92,69 +74,56 @@ public class IArena extends Arena {
 	@Override
 	public void stop() {
 
-		final IArena a = this;
-
 		Bukkit.getScheduler().cancelTask(block_destroyer);
 		super.stop();
-		Bukkit.getScheduler().runTaskLater(m, new Runnable() {
-			public void run() {
-				a.reset();
-			}
-		}, 100);
 	}
 
 	// Para destruir el bloque.
-	private final int SCAN_DEPTH = 2;
+	// private final int SCAN_DEPTH = 2;
 
-	public void destroyBlock(Location loc) {
+	@SuppressWarnings("deprecation")
+	public static void removeBlocksUnderPlayer(IArena arena) {
 
-		final IArena a = this;
+		final IArena a = arena;
+		final Main m = Main.m;
 
-		int y = loc.getBlockY() + 1;
-		Block block = null;
-		for (int i = 0; i <= SCAN_DEPTH; i++) {
-			block = getBlockUnderPlayer(y, loc);
-			y--;
-			if (block != null) {
-				break;
-			}
-		}
-		if (block != null) {
-			final Block fblock = block;
-			if (!blockstodestroy.contains(fblock)) {
-				blockstodestroy.add(fblock);
-				Bukkit.getScheduler().scheduleSyncDelayedTask(m, new Runnable() {
-					@SuppressWarnings("deprecation")
-					@Override
-					public void run() {
-						if (a.getArenaState() == ArenaState.INGAME) {
-							blockstodestroy.remove(fblock);
-							fblock.getWorld().playEffect(fblock.getLocation(), Effect.STEP_SOUND, fblock.getTypeId());
-							removeGLBlocks(fblock);
-						}
+		for (String player : a.getAllPlayers()) {
+			Player p = Bukkit.getPlayer(player);
+			if (m.pli.global_players.containsKey(p.getName()) && !m.pli.global_lost.containsKey(p.getName())) {
+				if (a.getArenaState() == ArenaState.INGAME) {
+					Location loc = p.getPlayer().getLocation().add(0, -1, 0);
+					// remove block under player feet
+					Block blocktoremove1 = getBlockUnderPlayer(loc);
+					if (blocktoremove1 == null)
+						return;
+					Block blocktoremove2 = blocktoremove1.getRelative(BlockFace.DOWN);
+					if (blocktoremove1 != null && blocktoremove2 != null) {
+						final Location blockloc1 = blocktoremove1.getLocation();
+						final Location blockloc2 = blocktoremove2.getLocation();
+
+						Bukkit.getScheduler().scheduleSyncDelayedTask(m, new Runnable() {
+							@Override
+							public void run() {
+								// Check if game hasn't stopped meanwhile
+								if (a.getArenaState() == ArenaState.INGAME) {
+									a.getSmartReset().addChanged(blockloc1.getBlock(), false);
+									blockloc1.getBlock().setType(Material.AIR);
+									a.getSmartReset().addChanged(blockloc2.getBlock(), false);
+									blockloc2.getBlock().setType(Material.AIR);
+								}
+							}
+						}, 8);
 					}
-				}, 8);
+				}
 			}
 		}
-	}
-
-	private void removeGLBlocks(Block block) {
-		blocks.add(block.getState());
-		saveBlock(block);
-		block = block.getRelative(BlockFace.DOWN);
-		blocks.add(block.getState());
-		saveBlock(block);
-	}
-
-	public void saveBlock(Block b) {
-		b.setType(Material.AIR);
 	}
 
 	// Obtener el bloque debajo del jugador.
 	private static double PLAYER_BOUNDINGBOX_ADD = 0.3;
 
-	private Block getBlockUnderPlayer(int y, Location location) {
-		PlayerPosition loc = new PlayerPosition(location.getX(), y, location.getZ());
+	private static Block getBlockUnderPlayer(Location location) {
+		PlayerPosition loc = new PlayerPosition(location);
 		Block b11 = loc.getBlock(location.getWorld(), +PLAYER_BOUNDINGBOX_ADD, -PLAYER_BOUNDINGBOX_ADD);
 		if (b11.getType() != Material.AIR) {
 			return b11;
@@ -174,36 +143,23 @@ public class IArena extends Arena {
 		return null;
 	}
 
-	// player handlers
-	public void handlePlayer(final Player player) {
-
-		final IArena a = this;
-
-		Location plloc = player.getLocation();
-		Location plufloc = plloc.clone().add(0, -1, 0);
-		// remove block under player feet
-		destroyBlock(plufloc);
-		// check for win
-		// TODO
-		// last player won
-		if (a.getPlayerAlive() == 1) {
-			a.stop();
-			return;
-		}
-		// check for lose
-		// not yet.
-	}
-
 	private static class PlayerPosition {
 
 		private double x;
 		private int y;
 		private double z;
 
+		@SuppressWarnings("unused")
 		public PlayerPosition(double x, int y, double z) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
+		}
+
+		public PlayerPosition(Location location) {
+			this.x = location.getX();
+			this.y = (int) location.getY();
+			this.z = location.getZ();
 		}
 
 		public Block getBlock(World world, double addx, double addz) {
