@@ -63,8 +63,8 @@ public class IArena extends Arena {
 
 	@Override
 	public void started() {
-
-		Bukkit.getLogger().info("Test started()");
+		// Test for working.
+		// Bukkit.getLogger().info("Test started()");
 
 		final IArena a = this;
 
